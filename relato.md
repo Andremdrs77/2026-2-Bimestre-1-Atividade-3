@@ -141,7 +141,7 @@ docker run --rm atividade_03 lua produto-consumidor.lua
 #### Problemas encontrados e soluções
 
 1. **Problema com `require`:** o `sequencial.lua` executava `principal()` mesmo quando era importado por `exemplo_main.lua`. O arquivo foi reorganizado para funcionar como módulo. 
-2. **Execução sequencial do produtor-consumidor:** inicialmente o consumidor só era iniciado depois do término do produtor. A solução foi iniciar as duas tarefas antes dos `join()` e utilizar uma Linda para a comunicação. 
+2. **Execução sequencial do produtor-consumidor:** inicialmente o consumidor só era iniciado depois do término do produtor. A solução foi iniciar as duas tarefas antes dos `join()` e utilizar Linda para a comunicação. 
 
 ---
 
