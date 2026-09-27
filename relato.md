@@ -1,69 +1,200 @@
-# Relatório sobre implementação de comunicação entre tarefas em FIXME
+# Relatório sobre implementação de comunicação entre tarefas em Lua
 
 ## Introdução
 
-Este relato faz parte do processo avaliativo da disciplina de sistemas operacionas no curso superior em análise e desenvolvimento de sistemas, ofertado na Diretoria acadêmica de gestão e tecnologia da informação no campus natal-central do instituto federal de educação, ciência e tecnologia do rio grande do norte.
+Este relato faz parte do processo avaliativo da disciplina de Sistemas Operacionais, do curso superior em Análise e Desenvolvimento de Sistemas, ofertado na Diretoria Acadêmica de Gestão e Tecnologia da Informação, no Campus Natal-Central do Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Norte.
 
-Tem como objetivo principal relatar as implementações de comunicação entre tarefas na linguagem FIXME.
+Tem como objetivo relatar as implementações de comunicação entre tarefas na linguagem Lua, utilizando Docker e a biblioteca Lanes.
 
-O grupo de trabalho foi formado por FIXME.
+O grupo de trabalho foi formado por André Medeiros, Denju Gabriel e Lucas Gabryel.
 
-## Comunicação entre tarefas em FIXME
+## Comunicação entre tarefas em Lua
 
 ### Informações gerais
 
-FIXME
-> qual o objetivo de comunicação entre tarefas? 
+A comunicação entre tarefas permite que diferentes tarefas de uma aplicação troquem informações e cooperem entre si. O mecanismo utilizado depende de onde as tarefas estão sendo executadas: no mesmo processo, em processos diferentes ou em computadores diferentes.
 
-FIXME
-> explicar porque usar docker nesse trabalho.
-> qual a configuração do docker?
+Neste trabalho foi utilizada a linguagem Lua, juntamente com a biblioteca Lanes, para trabalhar com tarefas concorrentes.
+
+O Docker foi utilizado para padronizar o ambiente de execução, evitando dependências das configurações do computador. Foi utilizada a imagem `nickblah/lua:5.4-luarocks`, com instalação da biblioteca Lanes.
+
+A configuração utilizada foi:
+
+```
+```
+
+```
+FROM nickblah/lua:5.4-luarocks
+
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    libc6-dev
+
+RUN luarocks install lanes
+
+WORKDIR /app
+
+COPY . .
+
+CMD ["lua", "sequencial.lua"]
+```
+
+A imagem foi construída com:
+
+```
+```
+
+```
+docker build -t atividade_03 .
+```
+
+e executada com:
+
+```
+```
+
+```
+docker run --rm atividade_03
+```
+
+---
 
 ### Comunicação entre tarefas com linhas de execução no mesmo processo
 
-FIXME
-> texto explicando o código
-> mostrar o código completo
+Nesta etapa foi implementado um produtor-consumidor utilizando tarefas concorrentes. O produtor gera 100 números aleatórios entre 0 e 110, enquanto o consumidor recebe esses dados e calcula sua soma.
 
-FIXME
-> explicar como foi executado
-> mostrar as saídas do terminal
-> mostrar as saídas do terminal
+Foi utilizada a biblioteca Lanes e uma **Linda** para realizar a comunicação entre as tarefas. O produtor coloca os dados na Linda utilizando `set`, enquanto o consumidor os recupera utilizando `get`.
 
-FIXME
-> se houve problema na execução, enumerar os problemas e suas respectivas soluções
+#### Código completo
+
+```
+```
+
+```
+local lanes = require("lanes").configure()
+
+local linda = lanes.linda()
+
+local function produzir_dados(linda)
+    math.randomseed(os.time())
+
+    local dados = {}
+
+    print("# produzir - iniciado")
+
+    for i = 1, 100 do
+        dados[i] = math.random(0, 110)
+    end
+
+    print("# produzir " .. table.concat(dados, ", "))
+    print("# produzir - terminado")
+
+    linda:set("dados", dados)
+end
+
+local function consumir_dados(linda)
+    print("### consumir - iniciado")
+
+    local dados = linda:get("dados")
+
+    print("### dados -> " .. table.concat(dados, ", "))
+
+    local resultado = 0
+
+    for i = 1, #dados do
+        resultado = resultado + dados[i]
+    end
+
+    print("### resultado -> " .. resultado)
+    print("### consumidor - terminado")
+end
+
+local produtor = lanes.gen("*", produzir_dados)
+local consumidor = lanes.gen("*", consumir_dados)
+
+print("iniciou")
+
+local thread_produtor = produtor(linda)
+local thread_consumidor = consumidor(linda)
+
+print("finalizou")
+
+thread_produtor:join()
+thread_consumidor:join()
+```
+
+O produtor e o consumidor são iniciados antes dos `join()`, permitindo que sejam executados concorrentemente. A Linda funciona como intermediária na comunicação entre as duas tarefas.
+
+#### Execução
+
+O programa sequencial foi executado no Docker com:
+
+```
+```
+
+```
+docker run --rm atividade_03
+```
+
+Algumas das saídas obtidas foram:
+
+```
+```
+
+```
+iniciou
+recebeu -> 6013
+finalizou
+```
+
+```
+```
+
+```
+iniciou
+recebeu -> 5703
+finalizou
+```
+
+Os valores variam porque os números utilizados no cálculo são gerados aleatoriamente.
+
+Para executar o produtor-consumidor:
+
+```
+```
+
+```
+docker run --rm atividade_03 lua produto-consumidor.lua
+```
+
+#### Problemas encontrados e soluções
+
+1. **Problema com `require`:** o `sequencial.lua` executava `principal()` mesmo quando era importado por `exemplo_main.lua`. O arquivo foi reorganizado para funcionar como módulo. 
+2. **Execução sequencial do produtor-consumidor:** inicialmente o consumidor só era iniciado depois do término do produtor. A solução foi iniciar as duas tarefas antes dos `join()` e utilizar uma Linda para a comunicação. 
+
+---
 
 ### Comunicação entre tarefas em processos diferentes no mesmo computador
 
-FIXME
-> texto explicando o código
-> mostrar o código completo
+Quando as tarefas pertencem a processos diferentes, elas não compartilham diretamente a mesma área de memória. Nesse caso, são necessários mecanismos de comunicação específicos, como pipes, filas de mensagens ou memória compartilhada.
 
-FIXME
-> explicar como foi executado
-> mostrar as saídas do terminal
-> mostrar as saídas do terminal
+**Essa comunicação não foi implementada neste trabalho.** A implementação realizada utilizou tarefas concorrentes dentro do mesmo processo, utilizando Lanes e Linda.
 
-FIXME
-> se houve problema na execução, enumerar os problemas e suas respectivas soluções
+---
 
 ### Comunicação entre tarefas em processos diferentes em computadores diferentes
 
-FIXME
-> texto explicando o código
-> mostrar o código completo
+Quando as tarefas estão em computadores diferentes, a comunicação precisa ocorrer através de uma rede. Nesse caso, podem ser utilizados mecanismos como sockets e protocolos de comunicação de rede.
 
-FIXME
-> explicar como foi executado
-> mostrar as saídas do terminal
-> mostrar as saídas do terminal
+**Essa comunicação também não foi implementada neste trabalho.** O Docker utilizado na atividade serviu para criar o ambiente de execução e não representa, por si só, uma comunicação entre computadores diferentes.
 
-FIXME
-> se houve problema na execução, enumerar os problemas e suas respectivas soluções
+---
 
 ## Considerações finais
 
-FIXME
-> conseguiu implementar tudo e executar?
-> qual foi o aprendizado nesse trabalho?
-> alguma recomendação para próximos alunos?
+Foi possível implementar e executar a comunicação entre tarefas no mesmo processo utilizando Lua, Lanes e Linda. Também foi possível executar os programas dentro de um container Docker configurado com Lua 5.4 e as dependências necessárias.
+
+O trabalho permitiu compreender, na prática, a comunicação entre tarefas concorrentes e relacioná-la aos conceitos estudados na disciplina.
+
+Como possibilidade para trabalhos futuros, podem ser implementadas as comunicações entre processos diferentes utilizando mecanismos como pipes ou memória compartilhada e, posteriormente, a comunicação entre computadores diferentes utilizando sockets.
