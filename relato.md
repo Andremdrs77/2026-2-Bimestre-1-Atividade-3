@@ -55,7 +55,7 @@ docker run --rm atividade_03
 
 Nesta etapa foi implementado um produtor-consumidor utilizando tarefas concorrentes. O produtor gera 100 números aleatórios entre 0 e 110, enquanto o consumidor recebe esses dados e calcula sua soma.
 
-Foi utilizada a biblioteca Lanes e uma **Linda** para realizar a comunicação entre as tarefas. O produtor coloca os dados na Linda utilizando `set`, enquanto o consumidor os recupera utilizando `get`.
+Foi utilizada a biblioteca Lanes e a biblioteca **Linda** para realizar a comunicação entre as tarefas. O produtor coloca os dados em Linda utilizando `set`, enquanto o consumidor os recupera utilizando `get`.
 
 #### Código completo
 
@@ -112,7 +112,7 @@ thread_produtor:join()
 thread_consumidor:join()
 ```
 
-O produtor e o consumidor são iniciados antes dos `join()`, permitindo que sejam executados concorrentemente. A Linda funciona como intermediária na comunicação entre as duas tarefas.
+O produtor e o consumidor são iniciados antes dos `join()`, permitindo que sejam executados concorrentemente. Linda funciona como intermediária na comunicação entre as duas tarefas.
 
 #### Execução
 
@@ -172,5 +172,3 @@ Quando as tarefas estão em computadores diferentes, a comunicação precisa oco
 Foi possível implementar e executar a comunicação entre tarefas no mesmo processo utilizando Lua, Lanes e Linda. Também foi possível executar os programas dentro de um container Docker configurado com Lua 5.4 e as dependências necessárias.
 
 O trabalho permitiu compreender, na prática, a comunicação entre tarefas concorrentes e relacioná-la aos conceitos estudados na disciplina.
-
-Como possibilidade para trabalhos futuros, podem ser implementadas as comunicações entre processos diferentes utilizando mecanismos como pipes ou memória compartilhada e, posteriormente, a comunicação entre computadores diferentes utilizando sockets.
