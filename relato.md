@@ -43,12 +43,6 @@ A imagem foi construída com:
 docker build -t atividade_03 .
 ```
 
-e executada com:
-
-```
-docker run --rm atividade_03
-```
-
 ---
 
 ### Comunicação entre tarefas com linhas de execução no mesmo processo
