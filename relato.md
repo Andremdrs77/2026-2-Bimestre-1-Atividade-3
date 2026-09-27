@@ -21,9 +21,6 @@ O Docker foi utilizado para padronizar o ambiente de execução, evitando depend
 A configuração utilizada foi:
 
 ```
-```
-
-```
 FROM nickblah/lua:5.4-luarocks
 
 RUN apt-get update && apt-get install -y \
@@ -43,16 +40,10 @@ CMD ["lua", "sequencial.lua"]
 A imagem foi construída com:
 
 ```
-```
-
-```
 docker build -t atividade_03 .
 ```
 
 e executada com:
-
-```
-```
 
 ```
 docker run --rm atividade_03
@@ -67,9 +58,6 @@ Nesta etapa foi implementado um produtor-consumidor utilizando tarefas concorren
 Foi utilizada a biblioteca Lanes e uma **Linda** para realizar a comunicação entre as tarefas. O produtor coloca os dados na Linda utilizando `set`, enquanto o consumidor os recupera utilizando `get`.
 
 #### Código completo
-
-```
-```
 
 ```
 local lanes = require("lanes").configure()
@@ -131,24 +119,15 @@ O produtor e o consumidor são iniciados antes dos `join()`, permitindo que seja
 O programa sequencial foi executado no Docker com:
 
 ```
-```
-
-```
 docker run --rm atividade_03
 ```
 
 Algumas das saídas obtidas foram:
 
 ```
-```
-
-```
 iniciou
 recebeu -> 6013
 finalizou
-```
-
-```
 ```
 
 ```
@@ -160,9 +139,6 @@ finalizou
 Os valores variam porque os números utilizados no cálculo são gerados aleatoriamente.
 
 Para executar o produtor-consumidor:
-
-```
-```
 
 ```
 docker run --rm atividade_03 lua produto-consumidor.lua
