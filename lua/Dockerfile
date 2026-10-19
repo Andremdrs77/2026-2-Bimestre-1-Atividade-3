@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN luarocks install lanes
 
+RUN luarocks install luasocket
+
 WORKDIR /app
 
 COPY . .
