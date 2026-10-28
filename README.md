@@ -23,7 +23,7 @@
 | C#         | Álvaro Luiz Barbalho de Souza Filho<br>Paulo Cesar Moreira da Silva<br>Pedro Messias Dias Neto | [github](https://github.com/moreirasilva1-tech/2026-2-Bimestre-1-Atividade-3) |
 | C++        | Artur Lima Melo<br>Arthur Vinicius Barreto Demetrio<br>Caio Lucas Alves de Oliveira            | [github](https://github.com/ArturLimaMelo/2026-2-Bimestre-1-Atividade-3) |
 | Clojure    | Geovanna Negreiros de Araújo<br>Haama Kethelen Souza Reis<br>Lucas Natanael de Andrade Mota    | [github](https://github.com/geovanna193/Atividade-3-S.O) |
-| Elixir     | Daniel Araujo Azevedo<br>Fábio Hudson Gomes de Souza<br>Rafael Duarte da Silva de Brito        | FIXME |
+| Elixir     | Daniel Araujo Azevedo<br>Fábio Hudson Gomes de Souza<br>Rafael Duarte da Silva de Brito        | [github](https://github.com/RafaelDuarteSilvaIFRN/2026-2-Bimestre-1-Atividade-3) |
 | F#         | Arthus Santos Aquino<br>João Ricardo Fernandes de Almeida<br>Ítalo Bruno de Lima Melo          | [github](https://github.com/joao-rick/Ativ3-FSharp) |
 | Go         | João Victor Marques Campos<br>Rio Ribeiro da Silva<br>Wheverton Cruz da Silva Filho            | [github](https://github.com/rioribeiro/2026-2-Bimestre-1-Atividade-3) |
 | Java       | Guilherme da Silva Cruz<br>José Vine Nunes Martins Araújo<br>Maria Clara Batista Viana Silva   | [github](https://github.com/cruzguilherme1-rpg/Fork-atividade-avaliativa_03_java) |
