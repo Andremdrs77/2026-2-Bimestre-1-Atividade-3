@@ -1,7 +1,7 @@
-print ("Consumidor iniciado!")
+print("Consumidor iniciado!")
 
 local mensagem = io.read()
 
-print ("Mensagem recebida: " . . mensagem)
+print("Mensagem recebida: " .. mensagem)
 
-print ("Consumidor finalizado!")
+print("Consumidor finalizado!")
