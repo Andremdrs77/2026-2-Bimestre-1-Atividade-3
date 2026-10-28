@@ -27,7 +27,7 @@
 | F#         | Arthus Santos Aquino<br>João Ricardo Fernandes de Almeida<br>Ítalo Bruno de Lima Melo          | [github](https://github.com/joao-rick/Ativ3-FSharp) |
 | Go         | João Victor Marques Campos<br>Rio Ribeiro da Silva<br>Wheverton Cruz da Silva Filho            | [github](https://github.com/rioribeiro/2026-2-Bimestre-1-Atividade-3) |
 | Java       | Guilherme da Silva Cruz<br>José Vine Nunes Martins Araújo<br>Maria Clara Batista Viana Silva   | FIXME |
-| Kotlin     | Ana Letícia Vidal de Oliveira<br>Iago Vinícius Souza de Sales<br>Valentine Varela              | FIXME |
+| Kotlin     | Ana Letícia Vidal de Oliveira<br>Iago Vinícius Souza de Sales<br>Valentine Varela              | [Kotlin](https://github.com/Iago-pixel/2026-2-Bimestre-1-Atividade-3) |
 | Lua        | Andre Medeiros Silva<br>Denju Gabriel da Silva Lira<br>Lucas Gabryel Silva de Holanda          | FIXME |
 | Rust       | [Julia Rafaelly Siqueira de Lima](https://github.com/JuliaRafaellySdL/)<br>[Lidia Rebeka da Silva Fernandes](https://github.com/rebekafernandes-cyber/)<br>[Lyonara da Silva Camelo](https://github.com/Lyonara/)  | [github](https://github.com/JuliaRafaellySdL/2026-2-Bimestre-1-Atividade-3-Rust) |
 | Typescript | Arkângelo Maycon Ashley da Silva Barbosa<br>Jadson de Medeiros Souza<br>Luiz Rodrigues da Silveira Neto | FIXME |
