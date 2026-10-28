@@ -1,6 +1,6 @@
 print("Produtor iniciado!")
 
-local pipe = io.popen("lua pipes/consumidor.lua", "w")
+local pipe = io.popen("lua5.4 lua/pipes/consumidor.lua", "w")
 
 if pipe then
     pipe:write("Hello World!\n")
