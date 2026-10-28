@@ -22,7 +22,7 @@
 | ---------- | --------- | ----------- |
 | C#         | Álvaro Luiz Barbalho de Souza Filho<br>Paulo Cesar Moreira da Silva<br>Pedro Messias Dias Neto | FIXME |
 | C++        | Artur Lima Melo<br>Arthur Vinicius Barreto Demetrio<br>Caio Lucas Alves de Oliveira            | [github](https://github.com/ArturLimaMelo/2026-2-Bimestre-1-Atividade-3) |
-| Clojure    | Geovanna Negreiros de Araújo<br>Haama Kethelen Souza Reis<br>Lucas Natanael de Andrade Mota    | FIXME |
+| Clojure    | Geovanna Negreiros de Araújo<br>Haama Kethelen Souza Reis<br>Lucas Natanael de Andrade Mota    | [github](https://github.com/geovanna193/Atividade-3-S.O) |
 | Elixir     | Daniel Araujo Azevedo<br>Fábio Hudson Gomes de Souza<br>Rafael Duarte da Silva de Brito        | FIXME |
 | F#         | Arthus Santos Aquino<br>João Ricardo Fernandes de Almeida<br>Ítalo Bruno de Lima Melo          | [github](https://github.com/joao-rick/Ativ3-FSharp) |
 | Go         | João Victor Marques Campos<br>Rio Ribeiro da Silva<br>Wheverton Cruz da Silva Filho            | [github](https://github.com/rioribeiro/2026-2-Bimestre-1-Atividade-3) |
