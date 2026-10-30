@@ -28,7 +28,7 @@
 | Go         | João Victor Marques Campos<br>Rio Ribeiro da Silva<br>Wheverton Cruz da Silva Filho            | [github](https://github.com/rioribeiro/2026-2-Bimestre-1-Atividade-3) | 04 |
 | Java       | Guilherme da Silva Cruz<br>José Vine Nunes Martins Araújo<br>Maria Clara Batista Viana Silva   | [github](https://github.com/cruzguilherme1-rpg/Fork-atividade-avaliativa_03_java) | 28/10/2026 |
 | Kotlin     | Ana Letícia Vidal de Oliveira<br>Iago Vinícius Souza de Sales<br>Valentine Varela              | [github](https://github.com/Iago-pixel/2026-2-Bimestre-1-Atividade-3) | 05/11/2026 |
-| Lua        | Andre Medeiros Silva<br>Denju Gabriel da Silva Lira<br>Lucas Gabryel Silva de Holanda          | FIXME | 02 |
+| Lua        | Andre Medeiros Silva<br>Denju Gabriel da Silva Lira<br>Lucas Gabryel Silva de Holanda          | [github](https://github.com/Andremdrs77/2026-2-Bimestre-1-Atividade-3) | 02 |
 | Rust       | [Julia Rafaelly Siqueira de Lima](https://github.com/JuliaRafaellySdL/)<br>[Lidia Rebeka da Silva Fernandes](https://github.com/rebekafernandes-cyber/)<br>[Lyonara da Silva Camelo](https://github.com/Lyonara/)  | [github](https://github.com/JuliaRafaellySdL/2026-2-Bimestre-1-Atividade-3-Rust) | 08 |
 | Typescript | Arkângelo Maycon Ashley da Silva Barbosa<br>Jadson de Medeiros Souza<br>Luiz Rodrigues da Silveira Neto | [github](https://github.com/Arkangelo00/2026-2-Bimestre-1-Atividade-3) | 05 |
 
