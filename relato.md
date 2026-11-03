@@ -20,6 +20,8 @@ O Docker foi utilizado para padronizar o ambiente de execução, evitando depend
 
 A configuração utilizada foi:
 
+**Dockerfile**
+
 ```dockerfile
 FROM nickblah/lua:5.4-luarocks
 
@@ -43,15 +45,15 @@ A imagem foi construída com:
 docker build -t atividade_03 .
 ```
 
----
-
-### Comunicação entre tarefas com linhas de execução no mesmo processo
+## Comunicação entre tarefas com linhas de execução no mesmo processo
 
 Nesta etapa foi implementado um produtor-consumidor utilizando tarefas concorrentes. O produtor gera 100 números aleatórios entre 0 e 110, enquanto o consumidor recebe esses dados e calcula sua soma.
 
 Foi utilizada a biblioteca Lanes e a biblioteca Linda para realizar a comunicação entre as tarefas. O produtor coloca os dados em Linda utilizando `set`, enquanto o consumidor os recupera utilizando `get`.
 
-#### Código completo
+### Código completo
+
+**produto-consumidor.lua**
 
 ```lua
 local lanes = require("lanes").configure()
@@ -108,7 +110,7 @@ thread_consumidor:join()
 
 O produtor e o consumidor são iniciados antes dos `join()`, permitindo que sejam executados concorrentemente. Linda funciona como intermediária na comunicação entre as duas tarefas.
 
-#### Execução
+### Execução
 
 O programa sequencial foi executado no Docker com:
 
@@ -122,9 +124,7 @@ Algumas das saídas obtidas foram:
 iniciou
 recebeu -> 6013
 finalizou
-```
 
-```text
 iniciou
 recebeu -> 5703
 finalizou
@@ -138,74 +138,357 @@ Para executar o produtor-consumidor:
 docker run --rm atividade_03 lua produto-consumidor.lua
 ```
 
-#### Problemas encontrados e soluções
+### Problemas encontrados e soluções
 
-1. **Problema com `require`:** o `sequencial.lua` executava `principal()` mesmo quando era importado por `exemplo_main.lua`. O arquivo foi reorganizado para funcionar como módulo.
+**Problema com require:** o `sequencial.lua` executava `principal()` mesmo quando era importado por `exemplo_main.lua`. O arquivo foi reorganizado para funcionar como módulo.
 
-2. **Execução sequencial do produtor-consumidor:** inicialmente o consumidor só era iniciado depois do término do produtor. A solução foi iniciar as duas tarefas antes dos `join()` e utilizar Linda para a comunicação.
+**Execução sequencial do produtor-consumidor:** inicialmente o consumidor só era iniciado depois do término do produtor. A solução foi iniciar as duas tarefas antes dos `join()` e utilizar Linda para a comunicação.
 
----
-
-### Comunicação entre processos diferentes no mesmo computador utilizando Pipes
+## Comunicação entre processos diferentes no mesmo computador utilizando Pipes
 
 Quando a comunicação ocorre entre processos diferentes no mesmo computador, eles não compartilham diretamente a mesma área de memória. Nesse caso, podem ser utilizados mecanismos como Pipes para permitir a troca de informações.
 
 Um Pipe funciona como um canal de comunicação, permitindo que a saída de um processo seja encaminhada para a entrada de outro.
 
-Nesta etapa, é possível utilizar dois programas em Lua: um produtor e um consumidor. O produtor envia informações pelo Pipe, enquanto o consumidor recebe esses dados e realiza o processamento.
+Nesta etapa foram implementados dois programas em Lua: um produtor e um consumidor. O produtor inicia o processo consumidor e envia uma mensagem pelo Pipe, enquanto o consumidor recebe e apresenta essa mensagem na tela.
 
-#### Código do consumidor (`consumidor.lua`)
+### Estrutura dos arquivos
+
+```text
+lua/
+└── pipes/
+    ├── produtor.lua
+    └── consumidor.lua
+```
+
+### Código do consumidor
+
+**lua/pipes/consumidor.lua**
 
 ```lua
-print("Consumidor iniciado")
+print("Consumidor iniciado!")
 
-local soma = 0
+local mensagem = io.read()
 
-for linha in io.lines() do
-    local numero = tonumber(linha)
+print("Mensagem recebida: " .. mensagem)
 
-    if numero then
-        soma = soma + numero
+print("Consumidor finalizado!")
+```
+
+O consumidor utiliza `io.read()` para receber a mensagem enviada pelo produtor através da entrada padrão.
+
+### Código do produtor
+
+**lua/pipes/produtor.lua**
+
+```lua
+print("Produtor iniciado!")
+
+local pipe = io.popen("lua5.4 lua/pipes/consumidor.lua", "w")
+
+if pipe then
+    pipe:write("Hello World!\n")
+    pipe:close()
+else
+    print("Erro ao iniciar o consumidor!")
+end
+
+print("Produtor finalizado!")
+```
+
+O produtor utiliza `io.popen()` para iniciar outro processo e estabelecer um canal de comunicação com ele. Em seguida, utiliza `pipe:write()` para enviar a mensagem "Hello World!" ao consumidor.
+
+### Execução
+
+No ambiente GitHub Codespaces, com Lua 5.4 instalado, o programa foi executado a partir da pasta principal do projeto utilizando:
+
+```bash
+lua5.4 lua/pipes/produtor.lua
+```
+
+O resultado obtido foi:
+
+```text
+Produtor iniciado!
+Consumidor iniciado!
+Mensagem recebida: Hello World!
+Consumidor finalizado!
+Produtor finalizado!
+```
+
+Nesse exemplo, o produtor inicia o consumidor e envia a mensagem pelo Pipe. O consumidor recebe a informação e apresenta o conteúdo na tela.
+
+A utilização do Pipe demonstra a comunicação unidirecional entre dois processos diferentes, sem a necessidade de compartilhar diretamente a memória.
+
+## Comunicação entre computadores diferentes utilizando Sockets
+
+A comunicação entre computadores diferentes pode ser realizada por meio de Sockets, que permitem a troca de informações através de uma rede.
+
+Para esse tipo de comunicação, foi utilizado o protocolo TCP, seguindo o modelo cliente-servidor. Nesse modelo, o servidor aguarda conexões, enquanto o cliente estabelece uma conexão para enviar e receber informações.
+
+Com base no material de referência sobre Sockets em Python, foram desenvolvidos exemplos equivalentes na linguagem Lua, utilizando a biblioteca LuaSocket.
+
+### Estrutura dos arquivos
+
+```text
+lua/
+└── sockets/
+    ├── servidor_basico.lua
+    ├── cliente_basico.lua
+    ├── servidor_echo.lua
+    ├── cliente_echo.lua
+    ├── servidor_chat.lua
+    └── cliente_chat.lua
+```
+
+### 1. Servidor e cliente básico
+
+Esse exemplo apresenta uma conexão simples entre cliente e servidor, permitindo a troca de uma mensagem.
+
+O servidor fica aguardando uma conexão, enquanto o cliente se conecta e envia uma mensagem. O servidor recebe a informação e responde ao cliente.
+
+**servidor_basico.lua**
+
+```lua
+local socket = require("socket")
+
+local servidor = assert(socket.bind("*", 8080))
+
+print("Servidor aguardando conexao...")
+
+local cliente = servidor:accept()
+
+print("Cliente conectado!")
+
+local mensagem = cliente:receive("*l")
+
+print("Mensagem recebida: " .. (mensagem or ""))
+
+cliente:send("Mensagem recebida pelo servidor!\n")
+
+cliente:close()
+servidor:close()
+```
+
+**cliente_basico.lua**
+
+```lua
+local socket = require("socket")
+
+local cliente = assert(socket.connect("127.0.0.1", 8080))
+
+cliente:send("Ola, servidor!\n")
+
+local resposta = cliente:receive("*l")
+
+print("Resposta do servidor: " .. (resposta or ""))
+
+cliente:close()
+```
+
+### 2. Servidor e cliente Echo
+
+Nesse modelo, o servidor recebe uma mensagem enviada pelo cliente e devolve o mesmo conteúdo.
+
+Esse exemplo permite compreender melhor o funcionamento do envio e recebimento de dados por meio de uma conexão TCP.
+
+**servidor_echo.lua**
+
+```lua
+local socket = require("socket")
+
+local servidor = assert(socket.bind("*", 8081))
+
+print("Servidor Echo aguardando conexao...")
+
+local cliente = servidor:accept()
+
+print("Cliente conectado!")
+
+while true do
+    local mensagem, erro = cliente:receive("*l")
+
+    if not mensagem then
+        break
+    end
+
+    print("Recebido: " .. mensagem)
+
+    cliente:send(mensagem .. "\n")
+end
+
+cliente:close()
+servidor:close()
+```
+
+**cliente_echo.lua**
+
+```lua
+local socket = require("socket")
+
+local cliente = assert(socket.connect("127.0.0.1", 8081))
+
+while true do
+    io.write("Digite uma mensagem (sair para encerrar): ")
+
+    local mensagem = io.read()
+
+    if not mensagem or mensagem == "sair" then
+        break
+    end
+
+    cliente:send(mensagem .. "\n")
+
+    local resposta = cliente:receive("*l")
+
+    print("Resposta do servidor: " .. (resposta or ""))
+end
+
+cliente:close()
+```
+
+### 3. Servidor e cliente Chat
+
+O exemplo de Chat permite a comunicação entre vários clientes conectados a um servidor.
+
+O servidor recebe mensagens dos clientes e encaminha essas informações aos demais participantes conectados. Para isso, utiliza uma estrutura de repetição para verificar as conexões e receber as mensagens.
+
+**servidor_chat.lua**
+
+```lua
+local socket = require("socket")
+
+local servidor = assert(socket.bind("*", 8082))
+
+servidor:settimeout(0)
+
+local clientes = {}
+
+print("Servidor de chat iniciado!")
+
+while true do
+    local novo_cliente = servidor:accept()
+
+    if novo_cliente then
+        novo_cliente:settimeout(0)
+
+        table.insert(clientes, novo_cliente)
+
+        print("Novo cliente conectado!")
+    end
+
+    for i = #clientes, 1, -1 do
+        local cliente = clientes[i]
+
+        local mensagem, erro = cliente:receive("*l")
+
+        if mensagem then
+            print("Mensagem: " .. mensagem)
+
+            for _, outro in ipairs(clientes) do
+                if outro ~= cliente then
+                    outro:send(mensagem .. "\n")
+                end
+            end
+
+        elseif erro == "closed" then
+            print("Cliente desconectado!")
+
+            cliente:close()
+            table.remove(clientes, i)
+        end
+    end
+
+    socket.sleep(0.05)
+end
+```
+
+**cliente_chat.lua**
+
+```lua
+local socket = require("socket")
+
+local cliente = assert(socket.connect("127.0.0.1", 8082))
+
+cliente:settimeout(0)
+
+print("Conectado ao chat!")
+print("Digite suas mensagens (sair para encerrar):")
+
+while true do
+    local mensagem = io.read()
+
+    if not mensagem or mensagem == "sair" then
+        break
+    end
+
+    cliente:send(mensagem .. "\n")
+
+    local resposta, erro = cliente:receive("*l")
+
+    if resposta then
+        print("Mensagem recebida: " .. resposta)
     end
 end
 
-print("Resultado recebido: " .. soma)
-print("Consumidor finalizado")
+cliente:close()
 ```
 
-#### Código do produtor (`produtor.lua`)
+### Biblioteca utilizada
 
-```lua
-print("Produtor iniciado")
+A biblioteca LuaSocket foi utilizada para criar conexões TCP, enviar e receber mensagens e implementar a comunicação entre cliente e servidor.
 
-local pipe = io.popen("lua consumidor.lua", "w")
-
-for i = 1, 10 do
-    pipe:write(i .. "\n")
-end
-
-pipe:close()
-
-print("Produtor finalizado")
-```
-
-Nesse exemplo, o produtor inicia o processo consumidor e envia dez números pelo Pipe. O consumidor recebe os valores pela entrada padrão e calcula a soma.
-
-A utilização do Pipe permite a comunicação entre dois processos independentes, sem a necessidade de compartilhar diretamente a memória.
-
-#### Execução
-
-Para executar o exemplo no ambiente Lua, os dois arquivos devem estar no mesmo diretório. O produtor pode ser iniciado com:
+Para instalar a biblioteca no ambiente Lua, foi utilizado:
 
 ```bash
-lua produtor.lua
+luarocks install luasocket
 ```
 
-O resultado esperado é a soma dos números enviados pelo produtor, que corresponde a 55.
+### Execução
 
----
+Para executar os exemplos, é necessário iniciar primeiro o servidor e depois o cliente correspondente, utilizando dois terminais.
 
-### Comunicação entre computadores diferentes utilizando Sockets
+Exemplo básico:
+
+Terminal 1:
+
+```bash
+lua5.4 lua/sockets/servidor_basico.lua
+```
+
+Terminal 2:
+
+```bash
+lua5.4 lua/sockets/cliente_basico.lua
+```
+
+Para o exemplo Echo:
+
+```bash
+lua5.4 lua/sockets/servidor_echo.lua
+```
+
+```bash
+lua5.4 lua/sockets/cliente_echo.lua
+```
+
+Para o exemplo Chat:
+
+```bash
+lua5.4 lua/sockets/servidor_chat.lua
+```
+
+```bash
+lua5.4 lua/sockets/cliente_chat.lua
+```
+
+Os exemplos utilizam o endereço `127.0.0.1`, que representa o próprio computador. Para a comunicação entre computadores diferentes, é necessário utilizar o endereço IP da máquina que executa o servidor e configurar o acesso à rede.
+
+## Considerações finais
+
+O desenvolvimento da atividade permitiu compreender diferentes mecanismos de comunicação entre tarefas e processos utilizando a linguagem Lua.
+
+Na comunicação dentro do mesmo processo, foram utComunicação entre computadores diferentes utilizando Sockets
 
 A comunicação entre computadores diferentes pode ser realizada por meio de Sockets, que permitem a troca de informações através de uma rede.
 
@@ -235,14 +518,8 @@ Na linguagem Lua, esses exemplos podem ser desenvolvidos utilizando a biblioteca
 
 A comunicação por Sockets permite que aplicações executadas em computadores diferentes troquem informações através da rede.
 
-**Observação:** os exemplos de servidor básico, Echo e Chat foram utilizados como referência conceitual a partir do material de Sockets em Python. A implementação correspondente em Lua ainda precisa ser desenvolvida e testada para que possa ser considerada concluída.
+**Observação:** os exemplos de servidor básico, Echo e Chat foram utilizados como referência conceitual a partir do material de Sockets em Python. A implementação correspondente em Lua ainda precisa ser desenvolvida e testada para que possa ser considerada concluída.ilizadas Lanes e Linda para permitir a troca de informações entre tarefas concorrentes. Na comunicação entre processos diferentes no mesmo computador, foi utilizado Pipe, por meio de `io.popen()`, para transmitir a mensagem "Hello World!". Já para a comunicação em rede, foram desenvolvidos exemplos utilizando a biblioteca LuaSocket, seguindo o modelo cliente-servidor.
 
----
+Durante o desenvolvimento, foram encontrados desafios relacionados à configuração do ambiente, à instalação das bibliotecas e à execução dos programas. A realização dos testes e a correção dos caminhos dos arquivos também foram importantes para o funcionamento das implementações.
 
-## Considerações finais
-
-Foi possível implementar e executar a comunicação entre tarefas no mesmo processo utilizando Lua, Lanes e Linda. Também foi possível executar os programas dentro de um container Docker configurado com Lua 5.4 e as dependências necessárias.
-
-Além disso, foram estudados os mecanismos de comunicação entre processos diferentes no mesmo computador, utilizando Pipes, e a comunicação entre computadores diferentes, utilizando Sockets.
-
-O trabalho permitiu compreender diferentes formas de comunicação entre tarefas e processos, relacionando os conceitos estudados na disciplina com exemplos práticos de programação.
+Dessa forma, a atividade contribuiu para relacionar os conceitos estudados na disciplina de Sistemas Operacionais com exemplos práticos de programação, demonstrando diferentes maneiras de realizar a comunicação entre tarefas e processos.
