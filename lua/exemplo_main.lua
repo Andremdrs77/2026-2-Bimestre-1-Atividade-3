@@ -1,5 +1,5 @@
 local sequencial = require("sequencial")
 
-sequencial.produzir_dados()
+sequencial.principal()
 
 print("teste")
